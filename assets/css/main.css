@@ -5,3 +5,7 @@
 .order-width {
     min-width: 12rem;
 }
+
+.text-bold {
+    font-weight: bold;
+}
