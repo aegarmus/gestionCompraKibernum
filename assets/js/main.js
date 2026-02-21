@@ -66,6 +66,37 @@ const products = [
     },  
 ];
 
+const cart = []
+
+/*
+----------------------------------------
+utils
+----------------------------------------
+*/
+
+
+// carrito utils
+
+const addtoCart = (productID) => {
+    const foundProduct = products.find(product => product.id === productID)
+
+    if(foundProduct.stock === 0) { //Guard Condition
+        alert('Producto agotado')
+        return;
+    }
+
+    const productInCart = cart.find(product => product.productID === productID)
+
+    if(!productInCart) {
+        if(foundProduct.stock > 0) cart.push({productID, quantity: 1})
+    } else {                                        // productInCart.quantity = productInCart.quantity + 1
+        if(productInCart.quantity < foundProduct.stock) productInCart.quantity += 1 //return implicito por erstar en una linea -> ventaja de ES6
+        if(productInCart.quantity === foundProduct.stock) alert('Product Agotado')
+    }
+
+    console.log(cart)
+}
+
 
 /*
 ---------------------------
@@ -74,13 +105,14 @@ Referencias del DOM
 */
 
 const productsTbody = document.querySelector('#productsTBody')
+const cartList = document.querySelector('#cartList')
 
-/*
-------------------------------
-Render in DOM
-------------------------------
+
+/* 
+--------------------------------
+Componentes
+--------------------------------
 */
-
 const createCardProducts = () => { 
     const cardsArray = products.map(
       (product) => `    
@@ -106,12 +138,73 @@ const createCardProducts = () => {
     return(cardsArray.join(''))
 }
 
+
+const createCartHTML = () => {
+    const cartLi = cart.map(item => {
+        const productCart = products.find(product => product.id === item.productID)
+
+        //TODO calcular precio total
+
+        const htmlStringCart = `
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="me-2">
+                        <div class="fw-semibold">${productCart.name}</div>
+                        <div class="text-muted small">${productCart.category} - ${productCart.price}</div>
+                        <div class="text-muted small">${productCart.price * item.quantity}</div>
+                    </div>
+                    
+                    <div class="d-flex flex-column align-items-end gap-1">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" data-action="descQuantity" data-id="${productCart.id}">-</button>
+                            <button class="btn btn-outline-secondary" disabled>${item.quantity}</button>
+                            <button class="btn btn-outline-secondary" data-action="incQuantity" data-id="${productCart.id}">+</button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" data-action="removeCartItem" data-id="${productCart.id}">Quitar</button>
+                    </div>
+                </div>
+            </li>
+        `;
+
+        return htmlStringCart
+    })
+
+    return cartLi.join('')
+}
+
+/*
+------------------------------
+Render in DOM
+------------------------------
+*/
+
 const renderHTMLstring = (htmlString, container) => {
     container.innerHTML = htmlString
 }
 
 const cardProducts = createCardProducts()
 
-console.log(cardProducts)
 
 renderHTMLstring(cardProducts, productsTbody)
+
+
+
+/*
+-----------------------------------------------
+listeners
+-----------------------------------------------
+*/
+
+productsTbody.addEventListener('click', (event) => {
+    const button = event.target.closest("button[data-action]")
+
+    const action = button.dataset.action
+    const id = button.dataset.id
+    
+
+    if(action === 'addToCart') {
+        addtoCart(id)
+        renderHTMLstring(createCartHTML(), cartList)
+        return;
+    }
+})
