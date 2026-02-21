@@ -33,38 +33,37 @@ const products = [
         id: crypto.randomUUID(),
         name: "Audifonos Studio X",
         category: "Audio",
-        precio: 129990,
+        price: 129990,
         stock: 12,
     },
     {
         id: crypto.randomUUID(),
         name: "Parlante Bluetooth Mini",
         category: "Audio",
-        precio: 24990,
+        price: 24990,
         stock: 7,
     },
     {
         id: crypto.randomUUID(),
         name: "Controlador DJ Entry",
         category: "DJ",
-        precio: 169990,
+        price: 169990,
         stock: 5,
     },
     {
         id: crypto.randomUUID(),
         name: "Micrófono Dinámico Pro",
         category: "Accesorio",
-        precio: 45990,
+        price: 45990,
         stock: 9,
     },
     {
         id: crypto.randomUUID(),
         name: "Cable TRS 5m",
         category: "Accesorio",
-        precio: 7990,
+        price: 7990,
         stock: 30,
-    },
-
+    },  
 ];
 
 
@@ -73,3 +72,46 @@ const products = [
 Referencias del DOM
 --------------------------- 
 */
+
+const productsTbody = document.querySelector('#productsTBody')
+
+/*
+------------------------------
+Render in DOM
+------------------------------
+*/
+
+const createCardProducts = () => { 
+    const cardsArray = products.map(
+      (product) => `    
+        <tr>
+            <td>
+                <p class="fw-semibold">${product.name}</p>
+                <p class="text-muted small">ID: ${product.id.slice(0, 8)}</p>
+            </td>
+            <td>${product.category}</td>
+            <td class="text-end">${product.price}</td>
+            <td class="text-end">${product.stock}</td>
+            <td class="text-end">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-success" data-action="addToCart" data-id="${product.id}">+ Carrito</button>
+                    <button class="btn btn-outline-primary" data-action="edit" data-id="${product.id}">Editar</button>
+                    <button class="btn btn-outline-danger" data-action="delete" data-id="${product.id}">Eliminar</button>
+                </div>
+            </td>
+        </tr>
+        `,
+    );
+
+    return(cardsArray.join(''))
+}
+
+const renderHTMLstring = (htmlString, container) => {
+    container.innerHTML = htmlString
+}
+
+const cardProducts = createCardProducts()
+
+console.log(cardProducts)
+
+renderHTMLstring(cardProducts, productsTbody)
