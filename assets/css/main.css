@@ -1,0 +1,11 @@
+.category-width {
+    min-width: 12.5rem;
+}
+
+.order-width {
+    min-width: 12rem;
+}
+
+.text-bold {
+    font-weight: bold;
+}
