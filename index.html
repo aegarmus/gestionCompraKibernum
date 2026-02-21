@@ -37,7 +37,43 @@
             </div>
         </header>
 
-        
+        <div class="row g-3">
+            <!--seccion izquierda: buscador y productos-->
+            <section class="col-12 col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                            <div class="flex-grow-1">
+                                <label class="form-label mb-1">Buscar</label>
+                                <input id="searchInput" class="form-control" placeholder="Buscar por nombre" />
+                            </div>
+                            <div class="category-width">
+                                <label class="form-label mb-1">Categoría</label>
+                                <select id="categoryFilter" class="form-select">
+                                    <option value="ALL">Todas</option>
+                                </select>
+                            </div>
+                            <div class="order-width">
+                                <label class="form-label mb-1">Orden</label>
+                                <select id="orderFilter" class="form-select">
+                                    <option value="NAME_ASC">Nombre (A-Z)</option>
+                                    <option value="NAME_DESC">Nombre (Z-A)</option>
+                                    <option value="PRICE_ASC">Precio (menor → mayor)</option>
+                                    <option value="PRICE_DESC">Precio (mayor → menor)</option>
+                                    <option value="STOCK_ASC">Stock (menor → mayor)</option>
+                                    <option value="STOCK_DESC">Stock (mayor → menor)</option>
+                                </select>
+                            </div>
+
+                            <hr class="my-3">
+
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
 </body>
 </html>
