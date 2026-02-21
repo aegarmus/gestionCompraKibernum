@@ -93,10 +93,29 @@ const addtoCart = (productID) => {
         if(productInCart.quantity < foundProduct.stock) productInCart.quantity += 1 //return implicito por erstar en una linea -> ventaja de ES6
         if(productInCart.quantity === foundProduct.stock) alert('Product Agotado')
     }
-
-    console.log(cart)
 }
 
+const descQuantity = (productID) => {
+    const product = cart.find(item => item.productID === productID)
+
+    product.quantity -= 1
+    if(product.quantity <= 0) {
+        const indexProduct = cart.findIndex(item => item.productID === productID)
+        cart.splice(indexProduct, 1)
+    }
+    
+}
+
+const incQuantity = (productID) => {
+    const product = products.find((item) => item.id === productID);
+    const cartProduct = cart.find(item => item.productID === productID)
+
+    if(cartProduct.quantity < product.stock) {
+        cartProduct.quantity += 1
+    } else {
+        alert("No hay más existencias disponibles");
+    }
+}
 
 /*
 ---------------------------
@@ -206,5 +225,23 @@ productsTbody.addEventListener('click', (event) => {
         addtoCart(id)
         renderHTMLstring(createCartHTML(), cartList)
         return;
+    }
+})
+
+cartList.addEventListener('click', (event) => {
+    const button = event.target.closest("button[data-action]")
+
+    const action = button.dataset.action;
+    const id = button.dataset.id;
+
+    if(action === 'descQuantity') {
+        descQuantity(id)
+        renderHTMLstring(createCartHTML(), cartList);
+        return;
+    }
+
+    if(action === 'incQuantity') {
+        incQuantity(id)
+        renderHTMLstring(createCartHTML(), cartList)
     }
 })
