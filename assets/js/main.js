@@ -74,6 +74,9 @@ utils
 ----------------------------------------
 */
 
+// Calcular subtotal, IVA, total
+
+
 
 // carrito utils
 
@@ -114,6 +117,13 @@ const incQuantity = (productID) => {
         cartProduct.quantity += 1
     } else {
         alert("No hay más existencias disponibles");
+    }
+}
+
+const deleteProduct = (id) => {
+    const cartIndex = cart.findIndex(item => item.productID === id)
+    if (cartIndex !== -1) {
+        cart.splice(cartIndex, 1)
     }
 }
 
@@ -242,6 +252,11 @@ cartList.addEventListener('click', (event) => {
 
     if(action === 'incQuantity') {
         incQuantity(id)
+        renderHTMLstring(createCartHTML(), cartList)
+    }
+
+    if(action === "removeCartItem") {
+        deleteProduct(id)
         renderHTMLstring(createCartHTML(), cartList)
     }
 })
