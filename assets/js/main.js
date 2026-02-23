@@ -76,7 +76,38 @@ utils
 
 // Calcular subtotal, IVA, total
 
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    }).format(price)
+}
 
+
+const calculateSubTotal = () => {
+    return cart.reduce((accum, item) => {
+        const productFound = products.find(product => product.id === item.productID)
+        return accum + (productFound.price * item.quantity )
+    }, 0)
+}
+
+const calculateIVA = (subtotal) => {
+    return subtotal * IVA
+}
+
+const calculateTotal = (subtotal, ivaSubtotal) => subtotal + ivaSubtotal
+
+
+const updateCartTotals = () => {
+    const subTotal = calculateSubTotal()
+    const ivaSubTotal = calculateIVA(subTotal);
+    const total = calculateTotal(subTotal, ivaSubTotal)
+
+    document.querySelector("#subtotalOut").textContent = formatPrice(subTotal);
+    document.querySelector("#ivaOut").textContent =   formatPrice(ivaSubTotal);
+    document.querySelector('#totalOut').textContent = formatPrice(total)
+}
 
 // carrito utils
 
@@ -151,7 +182,7 @@ const createCardProducts = () => {
                 <p class="text-muted small">ID: ${product.id.slice(0, 8)}</p>
             </td>
             <td>${product.category}</td>
-            <td class="text-end">${product.price}</td>
+            <td class="text-end">${formatPrice(product.price)}</td>
             <td class="text-end">${product.stock}</td>
             <td class="text-end">
                 <div class="btn-group btn-group-sm" role="group">
@@ -179,8 +210,8 @@ const createCartHTML = () => {
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="me-2">
                         <div class="fw-semibold">${productCart.name}</div>
-                        <div class="text-muted small">${productCart.category} - ${productCart.price}</div>
-                        <div class="text-muted small">${productCart.price * item.quantity}</div>
+                        <div class="text-muted small">${productCart.category} - ${formatPrice(productCart.price)}</div>
+                        <div class="text-muted small">${formatPrice(productCart.price * item.quantity)}</div>
                     </div>
                     
                     <div class="d-flex flex-column align-items-end gap-1">
@@ -234,6 +265,7 @@ productsTbody.addEventListener('click', (event) => {
     if(action === 'addToCart') {
         addtoCart(id)
         renderHTMLstring(createCartHTML(), cartList)
+        updateCartTotals();
         return;
     }
 })
@@ -247,16 +279,21 @@ cartList.addEventListener('click', (event) => {
     if(action === 'descQuantity') {
         descQuantity(id)
         renderHTMLstring(createCartHTML(), cartList);
+        updateCartTotals()
         return;
     }
 
     if(action === 'incQuantity') {
         incQuantity(id)
         renderHTMLstring(createCartHTML(), cartList)
+        updateCartTotals()
+        return
     }
 
     if(action === "removeCartItem") {
         deleteProduct(id)
         renderHTMLstring(createCartHTML(), cartList)
+        updateCartTotals()
+        return
     }
 })
