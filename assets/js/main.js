@@ -109,6 +109,37 @@ const updateCartTotals = () => {
     document.querySelector('#totalOut').textContent = formatPrice(total)
 }
 
+
+// CRUD Form 
+
+const createProduct = (name, category, price, stock) => {
+    const product = {
+        id: crypto.randomUUID(),
+        name,
+        category, 
+        price: parseInt(price), 
+        stock: parseInt(stock)
+    }
+
+    products.push(product)
+}
+
+let editProductID = null
+
+const updateProduct = (id, name, category, price, stock) => {
+    const productIndex = products.findIndex(product => product.id === id) // El número de la posición del objeto dentro del arreglo // Si no lo pilla devuelve -1
+
+    if(productIndex !== -1) {
+        products[productIndex] = {
+            id,
+            name,
+            category,
+            price,
+            stock
+        }
+    }
+}
+
 // carrito utils
 
 const addtoCart = (productID) => {
@@ -167,13 +198,24 @@ Referencias del DOM
 const productsTbody = document.querySelector('#productsTBody')
 const cartList = document.querySelector('#cartList')
 
+const formTitle = document.querySelector('#formTitle')
+const productForm = document.querySelector("#productForm");
+const nameInput = document.querySelector('#nameInput')
+const categoryInput = document.querySelector('#categoryInput')
+const priceInput = document.querySelector('#priceInput')
+const stockInput = document.querySelector('#stockInput');
+const btnSubmit = document.querySelector("#submitBtn");
+const cancelEditBtn = document.querySelector('#cancelEditBtn')
+
+
+
 
 /* 
 --------------------------------
 Componentes
 --------------------------------
 */
-const createCardProducts = () => { 
+const createTableProducts = () => { 
     const cardsArray = products.map(
       (product) => `    
         <tr>
@@ -242,12 +284,37 @@ const renderHTMLstring = (htmlString, container) => {
     container.innerHTML = htmlString
 }
 
-const cardProducts = createCardProducts()
+
+const renderProducts = () => {
+    const tableProducts = createTableProducts()
+    renderHTMLstring(tableProducts, productsTbody)
+}
+
+renderProducts()
 
 
-renderHTMLstring(cardProducts, productsTbody)
+const loadProductForm = (productID) => {
+    const product = products.find(product => product.id === productID)
 
+    if(product) {
+        nameInput.value = product.name
+        categoryInput.value = product.category
+        priceInput.value = product.price
+        stockInput.value = product.stock
+        editProductID = productID
+        formTitle.textContent = `Editando: ${product.name}`
+        btnSubmit.textContent = 'Actualizar Producto'
+        cancelEditBtn.disabled = false
+    }
+}
 
+const clearForm = () => {
+    productForm.reset()
+    editProductID = null
+    formTitle.textContent = 'Crear Producto'
+    btnSubmit.textContent = 'Guardar'
+    cancelEditBtn.disabled = true
+}
 
 /*
 -----------------------------------------------
@@ -267,6 +334,10 @@ productsTbody.addEventListener('click', (event) => {
         renderHTMLstring(createCartHTML(), cartList)
         updateCartTotals();
         return;
+    }
+
+    if(action === 'edit') {
+        loadProductForm(id)
     }
 })
 
@@ -295,5 +366,40 @@ cartList.addEventListener('click', (event) => {
         renderHTMLstring(createCartHTML(), cartList)
         updateCartTotals()
         return
+    }
+})
+
+productForm.addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    const name = nameInput.value.trim()
+    const category = categoryInput.value.trim()
+    const price = priceInput.value
+    const stock = stockInput.value
+
+    if (!name || !category || !price || !stock) {
+        alert('Por favor, completa el formulario con todos sus campos')
+        return;
+    }
+
+    if(editProductID) {
+        updateProduct(editProductID, name, category, price, stock)
+        alert(`${name} editado con éxito`)
+    } else {
+        createProduct(name, category, price, stock)
+        alert('Producto Creado con éxito')
+
+    }
+
+    renderProducts()
+    clearForm()
+
+})
+
+cancelEditBtn.addEventListener('click', () => {
+    const confirmCancel = confirm('Seguro que quieres cancelar la edición?')
+
+    if(confirmCancel) {
+        clearForm()
     }
 })
